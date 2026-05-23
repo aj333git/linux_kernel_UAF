@@ -1,0 +1,35 @@
+make
+
+
+sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file \
+sha256 \
+~/kernel_keys/MOK.key \
+~/kernel_keys/MOK.crt \
+slab_uaf_detector.ko
+
+insert → verify → test → remove.
+
+sudo insmod slab_uaf_detector.ko
+
+lsmod | grep slab_uaf_detector
+
+
+cat /proc/slab_uaf_stats
+
+You’ll see stats like:
+
+allocations
+frees
+UAF detects
+corruptions
+
+sudo cat /sys/kernel/debug/tracing/trace_pipe
+
+echo 1 | sudo tee /sys/kernel/debug/tracing/tracing_on
+
+sudo rmmod slab_uaf_detector
+
+lsmod | grep slab_uaf_detector
+
+dmesg | tail -50
+
